@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Base URL for your API - adjust as needed
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default {
   // Get all items

@@ -30,7 +30,7 @@ export default {
     async save() {
       // if (this.item.name && this.item.prix_achat) {
         await axios.post(
-            `http://localhost:3000/items`,
+            import.meta.env.VITE_API_URL+ `/items`,
             {
               body: JSON.stringify(this.item),
               headers: {
