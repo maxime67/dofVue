@@ -9,6 +9,7 @@ export default {
   async getAllItems() {
     try {
       const response = await axios.get(`${BASE_URL}/items`);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching items:', error);
