@@ -91,10 +91,10 @@ export default {
       <td class="p-3 text-center font-semibold text-gray-800">{{ item.prix_achat }}</td>
       <td class="p-3 text-center font-semibold text-gray-800">{{ item.prix_revente }}</td>
       <td v-if="item.prix_revente <= item.prix_achat" class="text-red-500 p-3 text-center font-semibold text-gray-800">
-        {{ (item.prix_revente / item.prix_achat * 100) -1 | floor }}%
+        {{ ((item.prix_revente / item.prix_achat) -1) * 100 | floor }}%
       </td>
       <td v-else class="text-green-400 p-3 text-center font-semibold text-gray-800">
-        {{ (item.prix_revente / item.prix_achat * 100) -1 | floor }}%
+        {{ ((item.prix_revente / item.prix_achat) -1) * 100 | floor }}%
       </td>
       <td class="p-3 text-center text-gray-600">{{ dateDiff(item.date_achat, item.date_revente) }}</td>
 
