@@ -32,7 +32,7 @@ export default {
       return new Date(dateString).toLocaleDateString();
     },
     dateDiff(achat, revente) {
-      if (!achat || !revente) return 'N/A';
+      if (!achat || !revente) return '----';
       const previous = new Date(achat);
       const after = new Date(revente);
       const diffTime = Math.abs(after - previous); // Get absolute difference in milliseconds
@@ -91,10 +91,10 @@ export default {
       <td class="p-3 text-center font-semibold text-gray-800">{{ item.prix_achat }}</td>
       <td class="p-3 text-center font-semibold text-gray-800">{{ item.prix_revente }}</td>
       <td v-if="item.prix_revente <= item.prix_achat" class="text-red-500 p-3 text-center font-semibold text-gray-800">
-        {{ item.prix_achat / item.prix_revente * 100  }}%
+        {{ item.prix_revente / item.prix_achat * 100 | floor }}%
       </td>
       <td v-else class="text-green-400 p-3 text-center font-semibold text-gray-800">
-        {{ item.prix_achat / item.prix_revente * 100  }}%
+        {{ item.prix_revente / item.prix_achat * 100 | floor }}%git
       </td>
       <td class="p-3 text-center text-gray-600">{{ dateDiff(item.date_achat, item.date_revente) }}</td>
 
