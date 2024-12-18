@@ -94,7 +94,7 @@ export default {
         {{ item.prix_revente / item.prix_achat * 100 | floor }}%
       </td>
       <td v-else class="text-green-400 p-3 text-center font-semibold text-gray-800">
-        {{ item.prix_revente / item.prix_achat * 100 | floor }}%git
+        {{ item.prix_revente / item.prix_achat * 100 | floor }}%
       </td>
       <td class="p-3 text-center text-gray-600">{{ dateDiff(item.date_achat, item.date_revente) }}</td>
 
