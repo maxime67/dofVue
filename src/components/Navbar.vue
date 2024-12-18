@@ -202,7 +202,6 @@ export default {
           const response = await axios.get(
               `https://api.dofusdu.de/dofus3/v1/fr/items/equipment/search?query=${this.query}&limit=10`
           );
-          console.log(response.data);
           this.results = response.data;
         } catch (error) {
           console.error('Error fetching data:', error);

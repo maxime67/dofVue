@@ -38,7 +38,6 @@ export default {
               }
             });
       // }
-      console.log(this.item);
       router.push("/")
     },
     convertDate(date) {
@@ -65,7 +64,6 @@ export default {
           this.item.ankama_id = response.data.ankama_id;
           this.item.picture_url = response.data.image_urls.icon;
           this.item.date_achat = this.convertDate(new Date(Date.now()))
-          console.log(this.item);
         } catch (error) {
           console.error('Error fetching data:', error);
         } finally {
@@ -76,7 +74,6 @@ export default {
   },
   created() {
     this.itemId = this.$route.query.itemId
-    console.log(this.itemId)
   },
   mounted() {
     this.fetchResults();

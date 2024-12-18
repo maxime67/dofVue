@@ -9,7 +9,6 @@ export default {
   async getAllItems() {
     try {
       const response = await axios.get(`${BASE_URL}/items`);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching items:', error);
@@ -19,7 +18,6 @@ export default {
   async test() {
     try {
       const response = await axios.get(`https://api.dofusdu.de/dofus3/v1/en/items/equipment/search?query=nidas&limit=25`);
-      console.log(response.data);
     } catch (error) {
       console.error('Error fetching items:', error);
       throw error;
