@@ -10,7 +10,7 @@
       when: ansible_os_family == "Debian"
 
     - name: Include cleanup tasks
-      import_tasks: cleanup.yml
+      import_tasks: playbooks/cleanup.yml
 
   roles:
     - apache
