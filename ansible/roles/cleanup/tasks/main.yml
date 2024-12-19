@@ -54,13 +54,6 @@
     state: absent
   become: false
 
-- name: Clear system memory cache
-  shell: |
-    sync
-    echo 3 > /proc/sys/vm/drop_caches
-  args:
-    warn: false
-
 - name: Get disk usage after cleanup
   shell: df -h
   register: disk_usage
