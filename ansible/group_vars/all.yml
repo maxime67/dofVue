@@ -7,4 +7,4 @@ nodejs_version: 20
 domain_name: easysetup.fr
 repository_url: https://github.com/maxime67/dofVue
 git_branch: master
-api_url: 192.168.1.42
+api_url: 192.168.1.42/
