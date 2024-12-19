@@ -28,7 +28,6 @@
 
 - name: Clean package manager cache (apt)
   apt:
-    clean: yes
     autoclean: yes
   when: ansible_os_family == "Debian"
 
