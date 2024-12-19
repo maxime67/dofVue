@@ -5,4 +5,4 @@ app_group: www-data
 app_root: /var/www/{{ app_name }}
 node_version: 20.x
 domain_name: easysetup.fr
-repository_url:
+repository_url: ${ANSIBLE_REPO}
