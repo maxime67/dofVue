@@ -1,4 +1,10 @@
 ---
+- name: Install Apache
+  apt:
+    name:
+      - git
+    state: present
+
 - name: Clone VueJS repository
   git:
     repo: ${ANSIBLE_REPO}
