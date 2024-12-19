@@ -1,0 +1,125 @@
+// Jenkinsfile
+pipeline {
+    agent any
+
+    environment {
+        // GitHub repositories information
+        VUEJS_REPO = 'https://github.com/your-org/vuejs-app.git'
+        ANSIBLE_REPO = 'https://github.com/your-org/ansible-vuejs-deploy.git'
+
+        // Ansible variables
+        ANSIBLE_INVENTORY = 'inventory/production.ini'
+
+        // Deployment variables
+        DEPLOY_ENV = 'production'
+
+        // Credentials IDs (need to be configured in Jenkins)
+        GIT_CREDS = 'github-credentials'
+        SSH_USER = credentials('ssh-user')
+        SSH_PASSWORD = credentials('ssh-password')
+
+        // Workspace paths
+        ANSIBLE_PATH = 'ansible-deploy'
+        VUEJS_PATH = 'vuejs-app'
+    }
+
+    stages {
+        stage('Checkout') {
+            parallel {
+                stage('Checkout Ansible') {
+                    steps {
+                        dir(ANSIBLE_PATH) {
+                            git branch: 'main',
+                                credentialsId: GIT_CREDS,
+                                url: ANSIBLE_REPO
+                        }
+                    }
+                }
+
+                stage('Checkout VueJS') {
+                    steps {
+                        dir(VUEJS_PATH) {
+                            git branch: 'main',
+                                credentialsId: GIT_CREDS,
+                                url: VUEJS_REPO
+                        }
+                    }
+                }
+            }
+        }
+
+//         stage('Configure Ansible') {
+//             steps {
+//                 dir(ANSIBLE_PATH) {
+//                     sh """
+//                         # Create ansible.cfg
+//                         echo "[defaults]" > ansible.cfg
+//                         echo "host_key_checking = False" >> ansible.cfg
+//                         echo "timeout = 30" >> ansible.cfg
+//
+//                         # Update inventory with credentials
+//                         cat > ${ANSIBLE_INVENTORY} << EOF
+//                         [production]
+//                         web1 ansible_host=192.168.1.48
+//
+//                         [production:vars]
+//                         ansible_user=${SSH_USER}
+//                         ansible_password=${SSH_PASSWORD}
+//                         ansible_become=true
+//                         ansible_become_method=sudo
+//                         ansible_become_password=${SSH_PASSWORD}
+//                         EOF
+//                     """
+//                 }
+//             }
+//         }
+
+        stage('Update Ansible Variables') {
+            steps {
+                script {
+                    dir(ANSIBLE_PATH) {
+                        sh """
+                            yq eval '.repository_url = "${VUEJS_REPO}"' -i group_vars/all.yml
+                            yq eval '.git_branch = "${params.BRANCH ?: 'main'}"' -i group_vars/all.yml
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Run Ansible Playbook') {
+            steps {
+                dir(ANSIBLE_PATH) {
+                    sh """
+                        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${ANSIBLE_INVENTORY} site.yml \
+                            --extra-vars "env=${DEPLOY_ENV}" \
+                            -v
+                    """
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                dir(ANSIBLE_PATH) {
+                    sh """
+                        ANSIBLE_HOST_KEY_CHECKING=False ansible all -i ${ANSIBLE_INVENTORY} -m uri \
+                            -a "url=http://{{ inventory_hostname }} return_content=yes"
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Deployment completed successfully!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
