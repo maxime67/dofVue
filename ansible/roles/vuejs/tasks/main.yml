@@ -1,7 +1,7 @@
 ---
 - name: Clone VueJS repository
   git:
-    repo: "{{ repository_url }}"
+    repo: ${ANSIBLE_REPO}
     dest: "{{ app_root }}"
     version: "{{ git_branch | default('main') }}"
   become_user: "{{ app_user }}"
