@@ -9,9 +9,7 @@
         update_cache: yes
       when: ansible_os_family == "Debian"
 
-    - name: Include cleanup tasks
-      import_playbook: playbooks/cleanup.yml
-
   roles:
+    - cleanup
     - apache
     - vuejs
