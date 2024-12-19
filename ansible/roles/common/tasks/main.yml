@@ -9,6 +9,6 @@
 
 - name: Install Node.js
   shell: |
-    curl -fsSL https://deb.nodesource.com/setup_{{ node_version }} | bash -
-    apt-get install -y nodejs
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    apt install nodejs
   when: ansible_os_family == "Debian"
