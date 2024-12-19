@@ -1,88 +1,67 @@
----
-- name: Cleanup VM before deployment
-  hosts: all
-  become: true
-  vars:
-    cleanup_paths:
-      - /tmp/*
-      - /var/tmp/*
-    log_paths:
-      - /var/log/*.log
-      - /var/log/*.gz
-    services_to_stop:
-      - apache
-    packages_to_remove:
-      - nodejs
-      - npm
-      - apache
-    script_path: "/tmp/cleanup.sh"
+- name: Copy cleanup script to remote
+  copy:
+    src: "../file/cleanup.sh"
+    dest: "{{ script_path }}"
+    mode: '0755'
 
+- name: Execute cleanup script
+  command: "{{ script_path }}"
+  register: cleanup_output
 
-  tasks:
-    - name: Copy cleanup script to remote
-      copy:
-        src: "../file/cleanup.sh"
-        dest: "{{ script_path }}"
-        mode: '0755'
+- name: Stop running services
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+  with_items: "{{ services_to_stop }}"
+  ignore_errors: yes
 
-    - name: Execute cleanup script
-      command: "{{ script_path }}"
-      register: cleanup_output
+- name: Remove specified packages
+  package:
+    name: "{{ packages_to_remove }}"
+    state: absent
+  ignore_errors: yes
 
-    - name: Stop running services
-      systemd:
-        name: "{{ item }}"
-        state: stopped
-      with_items: "{{ services_to_stop }}"
-      ignore_errors: yes
+- name: Clean package manager cache (apt)
+  apt:
+    clean: yes
+    autoclean: yes
+  when: ansible_os_family == "Debian"
 
-    - name: Remove specified packages
-      package:
-        name: "{{ packages_to_remove }}"
-        state: absent
-      ignore_errors: yes
+- name: Clean package manager cache (yum)
+  command: yum clean all
+  when: ansible_os_family == "RedHat"
+  args:
+    warn: false
 
-    - name: Clean package manager cache (apt)
-      apt:
-        clean: yes
-        autoclean: yes
-      when: ansible_os_family == "Debian"
+- name: Remove temporary files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ cleanup_paths }}"
 
-    - name: Clean package manager cache (yum)
-      command: yum clean all
-      when: ansible_os_family == "RedHat"
-      args:
-        warn: false
+- name: Truncate log files
+  command: truncate -s 0 {{ item }}
+  with_fileglob: "{{ log_paths }}"
+  ignore_errors: yes
 
-    - name: Remove temporary files
-      file:
-        path: "{{ item }}"
-        state: absent
-      with_items: "{{ cleanup_paths }}"
+- name: Clear user bash history
+  file:
+    path: ~/.bash_history
+    state: absent
+  become: false
 
-    - name: Truncate log files
-      command: truncate -s 0 {{ item }}
-      with_fileglob: "{{ log_paths }}"
-      ignore_errors: yes
+- name: Clear system memory cache
+  shell: |
+    sync
+    echo 3 > /proc/sys/vm/drop_caches
+  args:
+    warn: false
 
-    - name: Clear user bash history
-      file:
-        path: ~/.bash_history
-        state: absent
-      become: false
+- name: Get disk usage after cleanup
+  shell: df -h
+  register: disk_usage
+  changed_when: false
 
-    - name: Clear system memory cache
-      shell: |
-        sync
-        echo 3 > /proc/sys/vm/drop_caches
-      args:
-        warn: false
-
-    - name: Get disk usage after cleanup
-      shell: df -h
-      register: disk_usage
-      changed_when: false
-
-    - name: Display disk usage
-      debug:
-        var: disk_usage.stdout_lines
+- name: Display disk usage
+  debug:
+    var: disk_usage.stdout_lines
