@@ -10,6 +10,7 @@
     repo: "{{ repository_url }}"
     dest: "{{ app_root }}"
     version: "{{ git_branch | default('main') }}"
+    force: true
   become_user: "{{ app_user }}"
 
 - name: Install npm dependencies
