@@ -36,10 +36,11 @@ cleanup_system() {
     find /var/log -type f -name "*.log" -exec truncate -s 0 {} \;
     find /var/log -type f -name "*.gz" -delete
 
-    log_message "Clearing system cache..."
-    sync
-    echo 3 > /proc/sys/vm/drop_caches
-
+    if [ -w /proc/sys/vm/drop_caches ]; then
+        echo 3 > /proc/sys/vm/drop_caches
+    else
+        log_message "Warning: Cannot clear system cache, /proc/sys/vm/drop_caches is read-only"
+    fi
     log_message "Clearing bash history..."
     rm -f ~/.bash_history
     history -c
