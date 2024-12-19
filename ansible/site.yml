@@ -9,7 +9,8 @@
         update_cache: yes
       when: ansible_os_family == "Debian"
   tasks:
-    - import_playbook: cleanup.yml
+    name: cleanup
+      - import_playbook: cleanup.yml
 
   roles:
     - apache
