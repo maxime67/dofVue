@@ -20,7 +20,7 @@ pipeline {
             steps {
                 sh """
                 set -x
-                    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${ANSIBLE_INVENTORY} site.yml \
+                    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${ANSIBLE_INVENTORY} ansible/site.yml \
                         --extra-vars "env=${DEPLOY_ENV}" \
                         -vvv
                 """
