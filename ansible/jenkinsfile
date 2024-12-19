@@ -5,7 +5,6 @@ pipeline {
         // Repository and deployment variables
         ANSIBLE_REPO = 'https://github.com/maxime67/dofVue'
         ANSIBLE_INVENTORY = 'ansible/inventory/hosts.yml'
-        DEPLOY_ENV = 'production'
     }
 
     stages {
@@ -21,7 +20,6 @@ pipeline {
                 sh """
                 set -x
                     ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${ANSIBLE_INVENTORY} ansible/site.yml \
-                        --extra-vars "env=${DEPLOY_ENV}" \
                         -vvv
                 """
             }
