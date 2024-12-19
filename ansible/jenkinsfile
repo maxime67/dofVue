@@ -5,6 +5,7 @@ pipeline {
         // Repository and deployment variables
         ANSIBLE_REPO = 'https://github.com/maxime67/dofVue'
         ANSIBLE_INVENTORY = 'ansible/inventory/hosts.yml'
+        ANSIBLE_SITE_YML_PATH = "ansible/site.yml"
     }
 
     stages {
@@ -19,8 +20,8 @@ pipeline {
             steps {
                 sh """
                 set -x
-                    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${ANSIBLE_INVENTORY} ansible/site.yml \
-                        -v
+                     ansible-playbook -i ${ANSIBLE_INVENTORY} ${ANSIBLE_SITE_YML_PATH} \
+                     -v
                 """
             }
         }
