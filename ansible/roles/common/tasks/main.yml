@@ -1,0 +1,14 @@
+---
+- name: Create application directory
+  file:
+    path: "{{ app_root }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: '0755'
+
+- name: Install Node.js
+  shell: |
+    curl -fsSL https://deb.nodesource.com/setup_{{ node_version }} | bash -
+    apt-get install -y nodejs
+  when: ansible_os_family == "Debian"

@@ -1,0 +1,21 @@
+---
+- name: Clone VueJS repository
+  git:
+    repo: "{{ repository_url }}"
+    dest: "{{ app_root }}"
+    version: "{{ git_branch | default('main') }}"
+  become_user: "{{ app_user }}"
+
+- name: Install npm dependencies
+  npm:
+    path: "{{ app_root }}"
+    state: present
+  become_user: "{{ app_user }}"
+
+- name: Create environment file
+  template:
+    src: env.j2
+    dest: "{{ app_root }}/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: '0644'

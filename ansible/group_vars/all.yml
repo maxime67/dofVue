@@ -1,0 +1,6 @@
+---
+- app_name: vue-app
+- app_user: www-data
+- app_group: www-data
+- app_root: /var/www/{{ app_name }}
+- node_version: 20.x
