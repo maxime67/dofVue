@@ -10,3 +10,4 @@ packages_to_remove:
   - nodejs
   - npm
   - apache
+script_path: '../file/cleanup.sh'
