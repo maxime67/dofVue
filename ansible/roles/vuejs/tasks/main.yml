@@ -25,3 +25,8 @@
     owner: "{{ app_user }}"
     group: "{{ app_group }}"
     mode: '0644'
+
+- name: Build App
+  ansible.builtin.shell: npm run build
+  args:
+    chdir: "{{ app_root }}"
