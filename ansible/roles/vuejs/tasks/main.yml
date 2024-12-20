@@ -24,6 +24,11 @@
     state: present
     update_cache: yes
 
+- name: Remove app folder if exist
+  file:
+    path: "{{ app_root }}"
+    state: absent
+
 - name: Create application directory
   file:
     path: "{{ app_root }}"
